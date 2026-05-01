@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Self-Constructing Agents with Verified Skill Persistence — Conference Poster</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --gt-blue:    #041E42;
+    --gt-blue-2:  #002868;
+    --gt-blue-3:  #1B3F8C;
+    --gt-gold:    #C5A572;
+    --gt-gold-2:  #B89759;
+    --accent:     #1F6FB2;
+    --accent-2:   #4A90C7;
+    --accent-3:   #E8F1F9;
+    --ink:        #0F1A2E;
+    --ink-2:      #2C3A52;
+    --ink-3:      #5A6B85;
+    --paper:      #FBFAF6;
+    --paper-2:    #F4F1E8;
+    --rule:       #D8D4C7;
+    --rule-2:     #B8B3A0;
+    --green:      #2C7A4F;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --sans:  'IBM Plex Sans', sans-serif;
+    --mono:  'IBM Plex Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: #2a2a2a;
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Poster canvas — 36" × 24" landscape */
+  .poster {
+    width: 1728px;
+    min-height: 1152px;
+    margin: 24px auto;
+    background: var(--paper);
+    position: relative;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    background-image:
+      radial-gradient(ellipse at top left, rgba(31,111,178,0.04), transparent 50%),
+      radial-gradient(ellipse at bottom right, rgba(197,165,114,0.06), transparent 60%);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ============ HEADER ============ */
+  .header {
+    background: linear-gradient(135deg, var(--gt-blue) 0%, var(--gt-blue-2) 60%, var(--gt-blue-3) 100%);
+    color: white;
+    padding: 22px 48px;
+    position: relative;
+    border-bottom: 5px solid var(--gt-gold);
+    flex-shrink: 0;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gt-gold-2);
+  }
+
+  .header-grid {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 28px;
+    align-items: center;
+  }
+
+  .seal {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 2px solid var(--gt-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    color: var(--gt-gold);
+    font-size: 10px;
+    line-height: 1.15;
+    text-align: center;
+    padding: 6px;
+    font-style: italic;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .seal-mono {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    color: var(--gt-gold);
+    font-style: normal;
+    margin-top: 2px;
+  }
+
+  .title-block h1 {
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  .title-block .subtitle {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-style: italic;
+    color: rgba(255,255,255,0.85);
+    font-weight: 400;
+    margin-bottom: 10px;
+    letter-spacing: 0.005em;
+  }
+
+  .authors {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.92);
+  }
+
+  .authors .affiliation {
+    color: var(--gt-gold);
+    font-size: 12px;
+    margin-top: 2px;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+
+  /* ============ BODY GRID — tighter columns ============ */
+  .body {
+    padding: 18px 28px 22px;
+    display: grid;
+    grid-template-columns: 1fr 1.45fr 1fr;
+    gap: 16px;
+    flex: 1;
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  /* ============ SECTION CARDS — tighter padding ============ */
+  .section {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 14px 18px;
+  }
+
+  .section.tinted {
+    background: var(--paper-2);
+  }
+
+  .section.dark {
+    background: linear-gradient(180deg, var(--gt-blue) 0%, var(--gt-blue-2) 100%);
+    border: none;
+    color: white;
+  }
+
+  .section.dark .section-title { color: var(--gt-gold); }
+  .section.dark .section-title-line { background: var(--gt-gold); }
+
+  .section.spotlight {
+    background: white;
+    border: 1px solid var(--rule);
+    border-top: 4px solid var(--gt-gold);
+  }
+
+  .section-title {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--gt-blue);
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title-line {
+    flex: 1;
+    height: 1px;
+    background: var(--rule-2);
+    margin-left: 4px;
+  }
+
+  .section-subtitle {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+    letter-spacing: -0.005em;
+    line-height: 1.2;
+  }
+
+  .section.dark .section-subtitle { color: white; }
+
+  /* ============ TYPOGRAPHY — tighter ============ */
+  .section p {
+    font-family: var(--serif);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    margin-bottom: 8px;
+  }
+
+  .section p:last-child { margin-bottom: 0; }
+  .section.dark p { color: rgba(255,255,255,0.92); }
+
+  .section p .em {
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  .section p .strong {
+    font-weight: 600;
+    color: var(--gt-blue);
+  }
+
+  .section.dark p .strong {
+    color: var(--gt-gold);
+  }
+
+  /* ============ ARCHITECTURE STACK ============ */
+  .arch-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 10px;
+  }
+
+  .arch-layer {
+    background: white;
+    border: 1px solid var(--rule);
+    padding: 8px 12px;
+    display: grid;
+    grid-template-columns: 28px 165px 1fr;
+    gap: 12px;
+    align-items: center;
+    font-family: var(--sans);
+    border-radius: 2px;
+  }
+
+  .arch-layer.highlight {
+    background: linear-gradient(90deg, white 0%, var(--accent-3) 100%);
+    border-color: var(--accent);
+    border-left: 3px solid var(--accent);
+    padding-left: 9px;
+  }
+
+  .arch-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--gt-blue);
+    color: white;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .arch-layer.highlight .arch-num { background: var(--accent); }
+
+  .arch-name {
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 13px;
+    line-height: 1.15;
+  }
+
+  .arch-name .arch-file {
+    display: block;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--ink-3);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  .arch-desc {
+    color: var(--ink-2);
+    font-size: 11.5px;
+    line-height: 1.35;
+    font-family: var(--serif);
+  }
+
+  /* ============ VERIFICATION GATES ============ */
+  .gates-frame {
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 2px;
+  }
+
+  .gates-title {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--gt-blue);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .gates {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .gate {
+    background: white;
+    border: 1px solid var(--rule);
+    padding: 10px 8px;
+    text-align: center;
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .gate::after {
+    content: '→';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gt-gold-2);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .gate:last-child::after { display: none; }
+
+  .gate-num {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--gt-gold-2);
+    letter-spacing: 0.12em;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .gate-name {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--gt-blue);
+    margin-bottom: 3px;
+  }
+
+  .gate-desc {
+    font-family: var(--sans);
+    font-size: 9.5px;
+    color: var(--ink-3);
+    line-height: 1.3;
+  }
+
+  /* ============ PROCESS FLOW ============ */
+  .process-flow {
+    margin: 12px 0 0;
+    padding: 10px;
+    background: var(--paper-2);
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+  }
+
+  .process-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: nowrap;
+    margin-bottom: 5px;
+  }
+
+  .process-row:last-child { margin-bottom: 0; }
+
+  .process-node {
+    background: white;
+    border: 1px solid var(--rule-2);
+    padding: 5px 9px;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    color: var(--ink);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .process-node.start { background: var(--gt-blue); color: white; border: none; font-weight: 600; }
+  .process-node.end { background: var(--gt-gold); color: var(--gt-blue); border: none; font-weight: 600; }
+
+  .process-arrow {
+    color: var(--gt-gold-2);
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  /* ============ PROBLEM STATS ============ */
+  .problem-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--rule);
+  }
+
+  .problem-stat-num {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--gt-blue);
+    line-height: 1;
+  }
+
+  .problem-stat-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    color: var(--ink-3);
+    line-height: 1.3;
+    margin-top: 3px;
+  }
+
+  /* ============ RQ BLOCKS ============ */
+  .rq-block {
+    background: white;
+    border: 1px solid var(--rule);
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    border-radius: 2px;
+    border-left: 3px solid var(--accent);
+  }
+
+  .rq-block:last-child { margin-bottom: 0; }
+
+  .rq-num {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .rq-text {
+    font-family: var(--serif);
+    font-size: 12px;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  /* ============ RESULTS TABLE ============ */
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans);
+    font-size: 11.5px;
+    margin-top: 6px;
+  }
+
+  .results-table thead th {
+    background: var(--paper-2);
+    color: var(--gt-blue);
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 6px 8px;
+    text-align: right;
+    border-bottom: 1px solid var(--rule-2);
+  }
+
+  .results-table thead th:first-child { text-align: left; }
+
+  .results-table tbody td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-2);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .results-table tbody td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .results-table tbody tr.total td {
+    font-family: var(--serif);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gt-blue);
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--gt-blue);
+    border-top: 1px solid var(--gt-blue);
+  }
+
+  .results-table .delta-pos {
+    color: var(--green);
+    font-family: var(--mono);
+    font-weight: 600;
+  }
+
+  .result-summary {
+    font-family: var(--serif);
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    font-style: italic;
+    padding: 8px 0 0;
+    border-top: 1px dashed var(--rule);
+    margin-top: 8px;
+  }
+
+  .result-summary .strong-num {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--gt-blue);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  /* ============ MULTI-CHANNEL ============ */
+  .channel {
+    border-left: 3px solid var(--gt-gold);
+    padding-left: 12px;
+    margin-bottom: 9px;
+  }
+
+  .channel:last-child { margin-bottom: 0; }
+
+  .channel-name {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--gt-gold-2);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .channel-title {
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+
+  .channel-desc {
+    font-family: var(--serif);
+    font-size: 11px;
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+
+  /* ============ LIMITATIONS ============ */
+  .limit-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 5px 0;
+    border-bottom: 1px dashed var(--rule);
+    font-family: var(--sans);
+    font-size: 10.5px;
+    line-height: 1.4;
+  }
+
+  .limit-row:last-child { border-bottom: none; }
+
+  .limit-icon {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    color: var(--gt-gold-2);
+    font-weight: 700;
+    flex-shrink: 0;
+    min-width: 14px;
+  }
+
+  .limit-name {
+    font-weight: 600;
+    color: var(--gt-blue);
+  }
+
+  .limit-text { color: var(--ink-2); }
+
+  /* ============ FUTURE WORK ============ */
+  .future-item {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    font-family: var(--sans);
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .future-item:last-child { border-bottom: none; }
+
+  .future-num {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--gt-gold);
+    line-height: 1;
+  }
+
+  .future-content { color: rgba(255,255,255,0.92); }
+
+  .future-content strong {
+    display: block;
+    color: var(--gt-gold);
+    font-weight: 600;
+    font-size: 11.5px;
+    margin-bottom: 2px;
+  }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    background: var(--gt-blue);
+    color: rgba(255,255,255,0.7);
+    padding: 10px 28px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    border-top: 3px solid var(--gt-gold);
+  }
+
+  .footer .gold { color: var(--gt-gold); }
+
+  /* ============ INLINE EMPHASIS ============ */
+  .pill {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    background: var(--accent-3);
+    color: var(--gt-blue);
+  }
+
+  .pill.gold { background: rgba(197,165,114,0.2); color: var(--gt-gold-2); }
+  .pill.green { background: rgba(44,122,79,0.12); color: var(--green); }
+</style>
+</head>
+<body>
+
+<div class="poster">
+
+  <!-- ============== HEADER ============== -->
+  <div class="header">
+    <div class="header-grid">
+      <div class="seal">
+        <div>Georgetown</div>
+        <div class="seal-mono">UTRAQUE<br>UNUM</div>
+        <div>1789</div>
+      </div>
+      <div class="title-block">
+        <h1>Self-Constructing Agents with Verified Skill Persistence</h1>
+        <div class="subtitle">Procedural Memory in Code-Acting Language Agents through a Four-Gate Verification Pipeline</div>
+        <div class="authors">
+          Ihsan Alaeddin · Sazan Khalid
+          <div class="affiliation">DEPARTMENT OF DATA SCIENCE AND ANALYTICS · DSAN 6725 · GEORGETOWN UNIVERSITY</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== BODY ============== -->
+  <div class="body">
+
+    <!-- ===== LEFT COLUMN — MOTIVATION ===== -->
+    <div class="col">
+
+      <!-- Introduction -->
+      <div class="section">
+        <div class="section-title">Introduction <div class="section-title-line"></div></div>
+        <div class="section-subtitle">The integration knowledge problem</div>
+        <p>Most language-model agents are <span class="em">stateless</span>. Every new task starts at zero, and engineering knowledge produced during one session evaporates when it ends. In domains where the same problems recur, a stateless agent is structurally incapable of getting better at the work.</p>
+        <p>We present an architecture in which an agent <span class="strong">writes, verifies, and accumulates a permanent library of executable Python skills</span> as a by-product of normal task execution — and reuses them across future sessions through composition, evolution, and decay.</p>
+        <p>The motivating domain is the <span class="strong">November 2025 SWIFT ISO 20022 migration</span>, which retired the legacy MT format and forced 11,000+ banks to translate every cross-border payment into a new structured XML standard.</p>
+        <div class="problem-stats">
+          <div>
+            <div class="problem-stat-num">~5,000</div>
+            <div class="problem-stat-label">SWIFT-member banks projected non-compliant at the deadline</div>
+          </div>
+          <div>
+            <div class="problem-stat-num">$497K</div>
+            <div class="problem-stat-label">Average direct cost per problematic payment-modernization project</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Research Questions -->
+      <div class="section tinted">
+        <div class="section-title">Research Questions <div class="section-title-line"></div></div>
+        <div class="rq-block">
+          <div class="rq-num">RQ1 · Performance</div>
+          <div class="rq-text">Does an agent with an accumulated verified skill library perform measurably better on novel tasks than one starting cold?</div>
+        </div>
+        <div class="rq-block">
+          <div class="rq-num">RQ2 · Mechanism</div>
+          <div class="rq-text">Where does the benefit come from — direct skill reuse, accumulated context quality, episodic memory, or some combination?</div>
+        </div>
+        <div class="rq-block">
+          <div class="rq-num">RQ3 · Verification</div>
+          <div class="rq-text">Is the four-gate verification pipeline strict enough to keep the library trustworthy without suppressing skill formation entirely?</div>
+        </div>
+      </div>
+
+      <!-- Related Work -->
+      <div class="section">
+        <div class="section-title">Related Work <div class="section-title-line"></div></div>
+        <p><span class="strong">ReAct</span> (Yao et al., 2022) established interleaving reasoning with structured tool calls, but kept the action space fixed at design time.</p>
+        <p><span class="strong">CodeAct</span> (Wang et al., 2024) demonstrated that emitting Python directly is more expressive than JSON tool calls, reducing model calls ~30% on multi-step tasks.</p>
+        <p><span class="strong">Voyager</span> (Wang et al., 2023) showed open-ended skill accumulation in Minecraft. We extend this paradigm with <span class="em">verified persistence</span>, <span class="em">lifecycle management</span>, and a <span class="em">financial-domain application</span> where correctness is non-negotiable.</p>
+      </div>
+
+      <!-- Limitations moved here to fill left column -->
+      <div class="section tinted">
+        <div class="section-title">Limitations <div class="section-title-line"></div></div>
+        <div class="limit-row">
+          <span class="limit-icon">01</span>
+          <span class="limit-text"><span class="limit-name">Sample size.</span> n=6 benchmark tasks; single run — directional, not statistically significant.</span>
+        </div>
+        <div class="limit-row">
+          <span class="limit-icon">02</span>
+          <span class="limit-text"><span class="limit-name">Single model.</span> Agent, validation, and judge all use the same model — correlated failure modes.</span>
+        </div>
+        <div class="limit-row">
+          <span class="limit-icon">03</span>
+          <span class="limit-text"><span class="limit-name">Domain mismatch.</span> Payment-domain exploration; FastAPI benchmark — isolates context-quality benefit.</span>
+        </div>
+        <div class="limit-row">
+          <span class="limit-icon">04</span>
+          <span class="limit-text"><span class="limit-name">No ablations.</span> The three benefit channels are not independently tested.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== MIDDLE COLUMN — ARCHITECTURE ===== -->
+    <div class="col">
+
+      <!-- System Architecture -->
+      <div class="section spotlight">
+        <div class="section-title">System Architecture <div class="section-title-line"></div></div>
+        <div class="section-subtitle">Seven layers · single Python process · flat-file persistence</div>
+
+        <div class="arch-stack">
+          <div class="arch-layer">
+            <div class="arch-num">1</div>
+            <div class="arch-name">Orchestration<span class="arch-file">run.py · 1,629 lines</span></div>
+            <div class="arch-desc">Central task loop. Assembles context, routes responses, owns no permanent state.</div>
+          </div>
+          <div class="arch-layer">
+            <div class="arch-num">2</div>
+            <div class="arch-name">LLM Reasoning<span class="arch-file">gemini-2.5-flash-lite</span></div>
+            <div class="arch-desc">Emits four block types: ---EXECUTE---, ---PY SKILL---, ---MCP TOOL---, ---NEW TASK---</div>
+          </div>
+          <div class="arch-layer highlight">
+            <div class="arch-num">3</div>
+            <div class="arch-name">Verification Pipeline<span class="arch-file">core contribution</span></div>
+            <div class="arch-desc">Four sequential gates — every candidate skill must pass all four to be persisted.</div>
+          </div>
+          <div class="arch-layer">
+            <div class="arch-num">4</div>
+            <div class="arch-name">Persistent Stores<span class="arch-file">skills_py/ · memory/ · tools/</span></div>
+            <div class="arch-desc">Skill library, episodic memory, tool registry. All flat files, externally readable.</div>
+          </div>
+          <div class="arch-layer">
+            <div class="arch-num">5</div>
+            <div class="arch-name">Lifecycle Mechanics<span class="arch-file">compose · evolve · decay</span></div>
+            <div class="arch-desc">Skills are composed before generation, evolved on repeated failure, decayed after disuse.</div>
+          </div>
+          <div class="arch-layer">
+            <div class="arch-num">6</div>
+            <div class="arch-name">MCP Tool Calling<span class="arch-file">mcp_client.py · 306 lines</span></div>
+            <div class="arch-desc">Four built-in tools (read_file, search_code, run_python, list_skills) plus agent-built tool registration.</div>
+          </div>
+          <div class="arch-layer">
+            <div class="arch-num">7</div>
+            <div class="arch-name">RAG Reference Index<span class="arch-file">rag.py · 287 lines</span></div>
+            <div class="arch-desc">ISO 20022, NACHA, SWIFT specifications · all-MiniLM-L6-v2 embeddings · read-only</div>
+          </div>
+        </div>
+
+        <!-- Verification Gates -->
+        <div class="gates-frame">
+          <div class="gates-title">Verification Pipeline · Four Sequential Gates</div>
+          <div class="gates">
+            <div class="gate">
+              <div class="gate-num">GATE 1</div>
+              <div class="gate-name">AST Validity</div>
+              <div class="gate-desc">Python syntax check via ast.parse — catches truncation</div>
+            </div>
+            <div class="gate">
+              <div class="gate-num">GATE 2</div>
+              <div class="gate-name">Unit Test</div>
+              <div class="gate-desc">Sandboxed subprocess; must print "TEST PASSED"</div>
+            </div>
+            <div class="gate">
+              <div class="gate-num">GATE 3</div>
+              <div class="gate-name">ComplianceShield</div>
+              <div class="gate-desc">Static analysis blocks PII patterns, audit-flag</div>
+            </div>
+            <div class="gate">
+              <div class="gate-num">GATE 4</div>
+              <div class="gate-name">Adversarial</div>
+              <div class="gate-desc">Independent LLM generates 6 edge-case tests</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Per-task Flow -->
+        <div class="process-flow">
+          <div class="process-row">
+            <div class="process-node start">TASK</div>
+            <div class="process-arrow">→</div>
+            <div class="process-node">retrieve top-3 episodes</div>
+            <div class="process-arrow">→</div>
+            <div class="process-node">retrieve relevant skills</div>
+            <div class="process-arrow">→</div>
+            <div class="process-node">RAG chunks</div>
+            <div class="process-arrow">→</div>
+            <div class="process-node">tool manifest</div>
+          </div>
+          <div class="process-row">
+            <div class="process-node">assemble prompt</div>
+            <div class="process-arrow">→</div>
+            <div class="process-node">LLM call</div>
+            <div class="process-arrow">→</div>
+            <div class="process-node">parse blocks</div>
+            <div class="process-arrow">→</div>
+            <div class="process-node">verify (4 gates)</div>
+            <div class="process-arrow">→</div>
+            <div class="process-node end">PERSIST + LOG</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lifecycle Mechanics -->
+      <div class="section tinted">
+        <div class="section-title">Skill Lifecycle <div class="section-title-line"></div></div>
+        <div class="section-subtitle">Four mechanics that keep the library accurate and lean</div>
+        <p><span class="strong">Composition.</span> Before generating new code, the orchestrator retrieves the three highest-similarity skills and asks the model whether they can be combined to solve the task. If verified, the composition itself becomes a saved skill.</p>
+        <p><span class="strong">Evolution.</span> When a skill's <span class="pill">fail_count</span> reaches 2 and exceeds <span class="pill">success_count</span>, the model is asked to diagnose and patch it. The patched version is verified through the full pipeline; the original is archived as <span class="pill gold">_v1.py</span>.</p>
+        <p><span class="strong">Decay.</span> Each skill carries a relevance score: <span class="pill">success / (1 + days_unused × 0.1)</span>. Below 0.5 with age &gt; 7 days the skill is de-prioritised; below 0.1 with age &gt; 14 days it is auto-archived.</p>
+        <p><span class="strong">Failure recovery.</span> A classifier categorises low-graded outputs into five types — hallucination, missing_context, logical_inconsistency, tool_misuse, stylistic_misalignment — and applies a type-specific recovery prompt before marking the task failed.</p>
+      </div>
+
+    </div>
+
+    <!-- ===== RIGHT COLUMN — METHODS, RESULTS, FUTURE ===== -->
+    <div class="col">
+
+      <!-- Methods -->
+      <div class="section">
+        <div class="section-title">Methods <div class="section-title-line"></div></div>
+        <div class="section-subtitle">Cold–Warm within-subject design</div>
+        <p><span class="strong">Cold:</span> wipe skills + episodes → run benchmark.<br><span class="strong">Warm:</span> wipe → run 20 exploration tasks → run same benchmark. Identical model, prompt scaffolding, retrieval, and verification gates — only the library state varies.</p>
+        <p><span class="strong">Benchmark:</span> 6 tasks (2 per tier) against the FastAPI codebase. <span class="em">Tier 1</span> structural retrieval · <span class="em">Tier 2</span> pattern replication · <span class="em">Tier 3</span> novel synthesis.</p>
+        <p><span class="strong">Scoring:</span> 0–3 per task. LLM-as-judge (0–2) plus bonuses for code execution, real file references, and verified-skill use. Capped at 3 to avoid double-counting.</p>
+      </div>
+
+      <!-- Results -->
+      <div class="section">
+        <div class="section-title">Results <div class="section-title-line"></div></div>
+        <div class="section-subtitle">Directional evidence at n=6</div>
+
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>Cold</th>
+              <th>Warm</th>
+              <th>Δ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Tier 1 · Structural</td><td>1.50</td><td>2.50</td><td class="delta-pos">+1.00</td></tr>
+            <tr><td>Tier 2 · Pattern</td><td>2.00</td><td>2.50</td><td class="delta-pos">+0.50</td></tr>
+            <tr><td>Tier 3 · Synthesis</td><td>2.50</td><td>3.00</td><td class="delta-pos">+0.50</td></tr>
+            <tr class="total"><td>Overall</td><td>2.00</td><td>2.67</td><td class="delta-pos">+0.67</td></tr>
+          </tbody>
+        </table>
+
+        <div class="result-summary">
+          Warm condition outperformed cold by <span class="strong-num">+33.3%</span> across all three tiers. Six skills were verified during exploration; <span class="strong-num">only one</span> was directly invoked during the warm benchmark — yet improvements appeared on every tier including structural retrieval, where direct skill reuse should not have helped.
+        </div>
+      </div>
+
+      <!-- Multi-Channel Finding -->
+      <div class="section tinted">
+        <div class="section-title">Findings <div class="section-title-line"></div></div>
+        <div class="section-subtitle">The multi-channel benefit</div>
+        <p style="margin-bottom:10px; font-size:12px;">Tier 1 produced the largest gain (+1.00) despite being the tier least amenable to direct skill reuse. The benefit arrives through three channels:</p>
+        <div class="channel">
+          <div class="channel-name">CHANNEL 1</div>
+          <div class="channel-title">Episodic memory</div>
+          <div class="channel-desc">Twenty exploration episodes injected as context; <span class="pill green">missing_context</span> failures dropped 3 → 2 cold-to-warm.</div>
+        </div>
+        <div class="channel">
+          <div class="channel-name">CHANNEL 2</div>
+          <div class="channel-title">Tool-call discipline</div>
+          <div class="channel-desc">Non-empty skill manifest implicitly demonstrates the read-files-first pattern; warm tasks called <span class="pill">read_file</span> more reliably.</div>
+        </div>
+        <div class="channel">
+          <div class="channel-name">CHANNEL 3</div>
+          <div class="channel-title">Direct skill reuse</div>
+          <div class="channel-desc">The channel the architecture was designed for did the least work in this run.</div>
+        </div>
+      </div>
+
+      <!-- Future Work -->
+      <div class="section dark">
+        <div class="section-title">Future Work <div class="section-title-line"></div></div>
+        <div class="future-item">
+          <div class="future-num">01</div>
+          <div class="future-content">
+            <strong>Domain-matched re-run</strong>
+            Replace FastAPI benchmark with payment_benchmark_tasks.txt to isolate skill-reuse benefit.
+          </div>
+        </div>
+        <div class="future-item">
+          <div class="future-num">02</div>
+          <div class="future-content">
+            <strong>Channel ablation</strong>
+            Disable episodic memory · skill index · RAG independently to attribute the gain.
+          </div>
+        </div>
+        <div class="future-item">
+          <div class="future-num">03</div>
+          <div class="future-content">
+            <strong>Skill federation</strong>
+            Share verified, anonymised skills across deployments so institutions inherit accumulated knowledge.
+          </div>
+        </div>
+        <div class="future-item">
+          <div class="future-num">04</div>
+          <div class="future-content">
+            <strong>Stronger ComplianceShield</strong>
+            AST-level taint tracking, real PII detector, quarantine-rather-than-reject workflow.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ============== FOOTER ============== -->
+  <div class="footer">
+    <div>SELF-CONSTRUCTING AGENTS · DSAN 6725 · GEORGETOWN UNIVERSITY · SPRING 2026</div>
+    <div>Ihsan Alaeddin · Sazan Khalid</div>
+  </div>
+
+</div>
+
+</body>
+</html>

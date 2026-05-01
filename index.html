@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-Constructing Agents with Verified Skill Persistence</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --ink:    #0F1A2E;
+    --ink-2:  #2C3A52;
+    --ink-3:  #5A6B85;
+    --rule:   #D8D4C7;
+    --paper:  #FBFAF6;
+    --accent: #1F6FB2;
+    --gold:   #B89759;
+    --serif:  'Source Serif 4', Georgia, serif;
+    --sans:   'IBM Plex Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 32px 120px;
+  }
+
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 28px;
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 1.2;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-2);
+    font-size: 18px;
+    line-height: 1.4;
+  }
+
+  section {
+    margin-bottom: 48px;
+  }
+
+  h2 {
+    font-family: var(--sans);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  p {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--ink-2);
+    margin-bottom: 14px;
+  }
+
+  ul.materials {
+    list-style: none;
+  }
+
+  ul.materials li {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  ul.materials li:first-child {
+    border-top: 1px solid var(--rule);
+  }
+
+  ul.materials a {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 16px 4px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: background 0.15s, padding 0.15s;
+  }
+
+  ul.materials a:hover {
+    background: rgba(31, 111, 178, 0.04);
+    padding-left: 12px;
+  }
+
+  .label {
+    font-weight: 500;
+    font-size: 16px;
+    flex: 1;
+  }
+
+  .meta {
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+
+  .arrow {
+    color: var(--accent);
+    font-family: var(--serif);
+    font-size: 18px;
+  }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+
+  footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    .wrap { padding: 48px 20px 80px; }
+    h1 { font-size: 28px; }
+    .subtitle { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">CS 6725 · Final Project</div>
+      <h1>Self-Constructing Agents with Verified Skill Persistence</h1>
+      <div class="subtitle">Procedural memory in code-acting language agents through a four-gate verification pipeline</div>
+    </header>
+
+    <section>
+      <h2>Overview</h2>
+      <p>Most language-model agents are stateless — every task starts at zero, and engineering knowledge produced in one session evaporates when it ends. In domains where the same problems recur, a stateless agent is structurally incapable of improving at the work.</p>
+      <p>This project presents an architecture in which an agent writes, verifies, and accumulates a permanent library of executable Python skills as a by-product of normal task execution, then reuses them across future sessions through composition, evolution, and decay.</p>
+    </section>
+
+    <section>
+      <h2>Materials</h2>
+      <ul class="materials">
+        <li>
+          <a href="6725_report_final.pdf">
+            <span class="label">Final Report</span>
+            <span class="meta">PDF</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+        <li>
+          <a href="slides_6725.pdf">
+            <span class="label">Slides</span>
+            <span class="meta">PDF</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+        <li>
+          <a href="poster_final_6725.html">
+            <span class="label">Conference Poster</span>
+            <span class="meta">HTML</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+        <li>
+          <a href="presentation_final_video.mp4">
+            <span class="label">Presentation Video</span>
+            <span class="meta">MP4</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+        <li>
+          <a href="demo.mp4">
+            <span class="label">System Demo</span>
+            <span class="meta">MP4</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <footer>
+      Georgia Tech · CS 6725
+    </footer>
+  </div>
+</body>
+</html>
